@@ -4,6 +4,7 @@ using Silk.NET.OpenGL;
 using Silk.NET.Maths;
 
 using OpenglTestingCs.Engine.RenderObjects;
+using System.Numerics;
 
 namespace OpenglTestingCs.Engine
 {
@@ -14,6 +15,8 @@ namespace OpenglTestingCs.Engine
         private BufferObject<float> VBO; //vertex store
         private BufferObject<uint>  EBO; //indices store
         private VertexArrayObject<float, uint> VAO; //Stores VBOS and EBOS
+
+        private Camera _camera;
 
         private static Shader Shader;
 
@@ -35,9 +38,10 @@ namespace OpenglTestingCs.Engine
         };
         //////////////////////////////////////////
 
-        public RenderHandle(GL GL)
+        public RenderHandle(GL GL, Camera camera)
         {
             this.GL = GL;
+            _camera = camera;
         }
 
         public void OnLoadRender()
@@ -58,24 +62,22 @@ namespace OpenglTestingCs.Engine
 
         public unsafe void Render()
         {
+            GL.Enable(EnableCap.DepthTest);
             GL.Clear((uint)ClearBufferMask.ColorBufferBit);
 
             //Binding and using our VAO and shader.
             VAO.Bind();
             Shader.UseShader();
+
+            Matrix4x4 model = Matrix4x4.CreateRotationY(MathHelper.DegreesToRadians(10)) * Matrix4x4.CreateRotationX(MathHelper.DegreesToRadians(10));
+            Matrix4x4 view = Matrix4x4.CreateLookAt(_camera.getCameraPosition(), _camera.getCameraPosition() + _camera.getCameraFront(), _camera.getCameraUp());
+            Matrix4x4 projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(_camera.getCameraZoom()), (float)Program.WIDTH / (float)Program.HEIGHT, 0.1f, 100.0f);
+
             //Setting a uniform.
-
-            /*
-             glm::mat4 Camera::calculateViewMatrix() {
-	            return glm::lookAt(position, position + front, up);
-            }
-            var model = Matrix4x4.CreateRotationY(MathHelper.DegreesToRadians(difference)) * Matrix4x4.CreateRotationX(MathHelper.DegreesToRadians(difference));
-            var view = Matrix4x4.CreateLookAt(CameraPosition, CameraPosition + CameraFront, CameraUp);
-            var projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), Width / Height, 0.1f, 100.0f);
-             */
-            //Matrix4X4 model = Matrix4X4.CreateLookAt<>
-
-            Shader.SetUniform1("uBlue", (float)Math.Sin(DateTime.Now.Millisecond / 1000f * Math.PI));
+            Shader.SetUniform("uBlue", (float)Math.Sin(DateTime.Now.Millisecond / 1000f * Math.PI));
+            Shader.SetUniform("uModel", model);
+            Shader.SetUniform("uView", view);
+            Shader.SetUniform("uProjection", projection);
 
             GL.DrawElements(PrimitiveType.Triangles, (uint)Indices.Length, DrawElementsType.UnsignedInt, null);
         }

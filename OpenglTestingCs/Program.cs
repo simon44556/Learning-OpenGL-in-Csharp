@@ -19,8 +19,8 @@ namespace OpenglTestingCs
         private static RenderHandle renderHandle;
         private static Camera camera;
 
-        private static int WIDTH = 1024;
-        private static int HEIGHT = 768;
+        public static int WIDTH = 1024;
+        public static int HEIGHT = 768;
         private static double FPS = 60.0d;
         private static string TITLE = "Window Title";
         private static bool VSYNC = false;
@@ -49,8 +49,8 @@ namespace OpenglTestingCs
         private static void OnLoad()
         {
             inputHandler = new InputHandler(window);
-            renderHandle = new RenderHandle(GL.GetApi(window));
             camera = new Camera(inputHandler);
+            renderHandle = new RenderHandle(GL.GetApi(window), camera);
 
             renderHandle.OnLoadRender();
         }
@@ -63,7 +63,8 @@ namespace OpenglTestingCs
         }
         private static void OnUpdate(double time)
         {
-            camera.OnUpdate();
+            camera.OnUpdate(time, inputHandler.getCameraMove());
+            inputHandler.onUpdate();
         }
         private static void OnClose() {
             renderHandle.Dispose();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using Silk.NET.OpenGL;
 
 namespace OpenglTestingCs.Engine
@@ -146,7 +147,7 @@ namespace OpenglTestingCs.Engine
         }
 
         //Uniforms are properties that applies to the entire geometry
-        public void SetUniform1(string name, int value)
+        public void SetUniform(string name, int value)
         {
             //Setting a uniform on a shader using a name.
             int location = _gl.GetUniformLocation(_handle, name);
@@ -157,7 +158,7 @@ namespace OpenglTestingCs.Engine
             _gl.Uniform1(location, value);
         }
 
-        public void SetUniform1(string name, float value)
+        public void SetUniform(string name, float value)
         {
             int location = _gl.GetUniformLocation(_handle, name);
             if (location == -1)
@@ -167,15 +168,15 @@ namespace OpenglTestingCs.Engine
             _gl.Uniform1(location, value);
         }
 
-        //Create additional methods as needed
-        public void SetUniformMatrix4(string name, uint count, bool transpose, in float value)
+        public unsafe void SetUniform(string name, Matrix4x4 value)
         {
             int location = _gl.GetUniformLocation(_handle, name);
             if (location == -1)
             {
                 throw new Exception($"{name} uniform not found on shader.");
             }
-            _gl.UniformMatrix4(location, count, transpose, value);
+            UseShader();
+            _gl.UniformMatrix4(location, 1, false, (float*) &value);
         }
 
 

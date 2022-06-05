@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using OpenglTestingCs.Engine.Enums;
 using Silk.NET.OpenGL;
 
 namespace OpenglTestingCs.Engine
@@ -15,19 +16,75 @@ namespace OpenglTestingCs.Engine
 
         private float CameraYaw = -90f;
         private float CameraPitch = 0f;
-        private float CameraZoom = 45f;
+        private float CameraZoom = 90f;
+
+        private float moveSpeed;
+        private float boostSpeed;
 
         public Camera(InputHandler inputHandler)
         {
+            this.moveSpeed = 2.5f;
+            this.boostSpeed = 5.0f;
             _inputHandler = inputHandler;
         }
 
-        public void OnUpdate()
+        public Camera(InputHandler inputHandler, float moveSpeed, float boostSpeed)
         {
+            this.moveSpeed = moveSpeed;
+            this.boostSpeed = boostSpeed;
+            _inputHandler = inputHandler;
+        }
+
+        public void OnUpdate(double deltaTime, CameraMove moveDirection)
+        {
+            updateCameraPosition(deltaTime, moveDirection);
+            updateCameraRotation();
+        }
+
+        public Vector3 getCameraPosition () { return CameraPosition; }
+        public Vector3 getCameraFront() { return CameraFront; }
+        public Vector3 getCameraUp() { return CameraUp; }
+        public Vector3 getCameraDirection() { return CameraDirection; }
+        public float getCameraZoom() { return CameraZoom; }
+
+        private void updateCameraPosition(double deltaTime, CameraMove moveDirection)
+        {
+            float currenctSpeed;
+            if (moveDirection.HasFlag(CameraMove.ExtraSpeed)){
+                currenctSpeed = (moveSpeed+boostSpeed) * (float)deltaTime;
+            } else
+            {
+                currenctSpeed = moveSpeed * (float)deltaTime;
+            }
+
+            if (moveDirection.HasFlag( CameraMove.Front ))
+            {
+                CameraPosition += currenctSpeed * CameraFront;
+            }
+            if (moveDirection.HasFlag( CameraMove.Back ))
+            {
+                CameraPosition -= currenctSpeed * CameraFront;
+            }
+            if (moveDirection.HasFlag( CameraMove.Left ))
+            {
+                //Normalized cross product between up and front should be 90 degree angle vector
+                CameraPosition -= currenctSpeed * Vector3.Normalize(Vector3.Cross(CameraFront, CameraUp));
+            }
+            if (moveDirection.HasFlag( CameraMove.Right ))
+            {
+                CameraPosition += currenctSpeed  * Vector3.Normalize(Vector3.Cross(CameraFront, CameraUp));
+            }
+        }
+
+        private void updateCameraRotation()
+        {
+            //TODO: Check if we need delta time
             Vector2 moveVec2 = _inputHandler.getMouseMoveVector();
+            
 
             CameraYaw += moveVec2.X;
             CameraPitch -= moveVec2.Y;
+
 
             CameraPitch = Math.Clamp(CameraPitch, -89.0f, 89.0f);
 
@@ -36,7 +93,5 @@ namespace OpenglTestingCs.Engine
             CameraDirection.Z = MathF.Sin(MathHelper.DegreesToRadians(CameraYaw)) * MathF.Cos(MathHelper.DegreesToRadians(CameraPitch));
             CameraFront = Vector3.Normalize(CameraDirection);
         }
-
-
     }
 }

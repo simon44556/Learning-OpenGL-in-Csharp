@@ -2,6 +2,8 @@
 using Silk.NET.Maths;
 using Silk.NET.Windowing;
 
+using OpenglTestingCs.Engine.Enums;
+
 using System;
 using System.Numerics;
 
@@ -12,14 +14,21 @@ namespace OpenglTestingCs.Engine
         private IWindow window;
 
         private Vector2 lastMousePosition = Vector2.Zero;
-
         private Vector2 mouseMoveVector = Vector2.Zero;
+
+        private float mouseMoveSensitivity;
+
+        private IKeyboard keyboard;
+        private CameraMove cameraMove = CameraMove.None;
 
         public InputHandler(IWindow window)
         {
+            mouseMoveSensitivity = 1.0f;
             this.window = window;
 
             IInputContext input = window.CreateInput();
+
+            keyboard = input.Keyboards[0];
 
             for (int i = 0; i < input.Keyboards.Count; i++)
             {
@@ -36,6 +45,11 @@ namespace OpenglTestingCs.Engine
                 input.Mice[i].Scroll += this.MouseScroll;
                 input.Mice[i].Click += this.MouseClick;
             }
+        }
+
+        public void onUpdate()
+        {
+            mouseMoveVector = Vector2.Zero;
         }
 
         public void KeyDown(IKeyboard keyboard, Key key, int arg3)
@@ -60,9 +74,7 @@ namespace OpenglTestingCs.Engine
 
         public void MouseMove(IMouse mouse, Vector2 coords)
         {
-            float sensitivity = 0.1f;
-
-            mouseMoveVector = (coords - lastMousePosition) * sensitivity;
+            mouseMoveVector = (coords - lastMousePosition) * mouseMoveSensitivity;
             lastMousePosition = coords;
         }
 
@@ -85,7 +97,39 @@ namespace OpenglTestingCs.Engine
         }
         public Vector2 getMouseMoveVector()
         {
-            return mouseMoveVector;
+            Vector2 vector2 = mouseMoveVector;
+            // mouseMoveVector = Vector2.Zero; 
+            return vector2;
+        }
+
+        public CameraMove getCameraMove()
+        {
+            cameraMove = CameraMove.None;
+
+            if (keyboard.IsKeyPressed(Key.W))
+            {
+                cameraMove = cameraMove | CameraMove.Front;
+            }
+            if (keyboard.IsKeyPressed(Key.S))
+            {
+                cameraMove = cameraMove | CameraMove.Back;
+            }
+            if (keyboard.IsKeyPressed(Key.A))
+            {
+                cameraMove = cameraMove | CameraMove.Left;
+            }
+            if (keyboard.IsKeyPressed(Key.D))
+            {
+                cameraMove = cameraMove | CameraMove.Right;
+            }
+
+
+            if (keyboard.IsKeyPressed(Key.ShiftLeft))
+            {
+                cameraMove = cameraMove | CameraMove.ExtraSpeed;
+            }
+
+            return cameraMove;
         }
     }
 }
