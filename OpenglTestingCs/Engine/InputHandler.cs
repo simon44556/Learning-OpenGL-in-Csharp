@@ -74,6 +74,7 @@ namespace OpenglTestingCs.Engine
 
         public void MouseMove(IMouse mouse, Vector2 coords)
         {
+            if(lastMousePosition == default) { lastMousePosition = coords; return; }
             mouseMoveVector = (coords - lastMousePosition) * mouseMoveSensitivity;
             lastMousePosition = coords;
         }
@@ -97,15 +98,14 @@ namespace OpenglTestingCs.Engine
         }
         public Vector2 getMouseMoveVector()
         {
-            Vector2 vector2 = mouseMoveVector;
-            // mouseMoveVector = Vector2.Zero; 
-            return vector2;
+            return mouseMoveVector;
         }
 
         public CameraMove getCameraMove()
         {
             cameraMove = CameraMove.None;
 
+            //Normal movenemnt
             if (keyboard.IsKeyPressed(Key.W))
             {
                 cameraMove = cameraMove | CameraMove.Front;
@@ -123,7 +123,27 @@ namespace OpenglTestingCs.Engine
                 cameraMove = cameraMove | CameraMove.Right;
             }
 
+            //Tilt
+            if (keyboard.IsKeyPressed(Key.E))
+            {
+                cameraMove |= CameraMove.TiltRight;
+            }
+            if (keyboard.IsKeyPressed(Key.Q))
+            {
+                cameraMove |= CameraMove.TiltLeft;
+            }
 
+            //UP AND DOWN
+            if (keyboard.IsKeyPressed(Key.C))
+            {
+                cameraMove = cameraMove | CameraMove.Down;
+            }
+            if (keyboard.IsKeyPressed(Key.Space))
+            {
+                cameraMove = cameraMove | CameraMove.Up;
+            }
+
+            //Boost
             if (keyboard.IsKeyPressed(Key.ShiftLeft))
             {
                 cameraMove = cameraMove | CameraMove.ExtraSpeed;

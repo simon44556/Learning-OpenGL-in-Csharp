@@ -63,13 +63,13 @@ namespace OpenglTestingCs.Engine
         public unsafe void Render()
         {
             GL.Enable(EnableCap.DepthTest);
-            GL.Clear((uint)ClearBufferMask.ColorBufferBit);
+            GL.Clear((uint)ClearBufferMask.ColorBufferBit | (uint)ClearBufferMask.DepthBufferBit);
 
             //Binding and using our VAO and shader.
             VAO.Bind();
             Shader.UseShader();
 
-            Matrix4x4 model = Matrix4x4.CreateRotationY(MathHelper.DegreesToRadians(10)) * Matrix4x4.CreateRotationX(MathHelper.DegreesToRadians(10));
+            Matrix4x4 model = Matrix4x4.Identity;
             Matrix4x4 view = Matrix4x4.CreateLookAt(_camera.getCameraPosition(), _camera.getCameraPosition() + _camera.getCameraFront(), _camera.getCameraUp());
             Matrix4x4 projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(_camera.getCameraZoom()), (float)Program.WIDTH / (float)Program.HEIGHT, 0.1f, 100.0f);
 

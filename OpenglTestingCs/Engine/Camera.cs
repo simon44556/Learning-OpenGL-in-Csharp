@@ -50,6 +50,7 @@ namespace OpenglTestingCs.Engine
         private void updateCameraPosition(double deltaTime, CameraMove moveDirection)
         {
             float currenctSpeed;
+            //Boost
             if (moveDirection.HasFlag(CameraMove.ExtraSpeed)){
                 currenctSpeed = (moveSpeed+boostSpeed) * (float)deltaTime;
             } else
@@ -57,6 +58,7 @@ namespace OpenglTestingCs.Engine
                 currenctSpeed = moveSpeed * (float)deltaTime;
             }
 
+            //Normal movement
             if (moveDirection.HasFlag( CameraMove.Front ))
             {
                 CameraPosition += currenctSpeed * CameraFront;
@@ -74,6 +76,28 @@ namespace OpenglTestingCs.Engine
             {
                 CameraPosition += currenctSpeed  * Vector3.Normalize(Vector3.Cross(CameraFront, CameraUp));
             }
+
+            //Up and down
+            if (moveDirection.HasFlag(CameraMove.Up))
+            {
+                CameraPosition += currenctSpeed * CameraUp;
+            }
+            if (moveDirection.HasFlag(CameraMove.Down))
+            {
+                CameraPosition -= currenctSpeed * CameraUp;
+            }
+
+            //Tilt control
+            /*if (moveDirection.HasFlag(CameraMove.TiltRight))
+            {
+                Console.WriteLine(CameraUp);
+
+                CameraUp = new Vector3(CameraUp.X + (0.1f*currenctSpeed), CameraUp.Y, CameraUp.Z);
+            }
+            if (moveDirection.HasFlag(CameraMove.TiltLeft))
+            {
+                CameraUp = new Vector3(CameraUp.X - (0.1f*currenctSpeed), CameraUp.Y, CameraUp.Z);
+            }*/
         }
 
         private void updateCameraRotation()
@@ -81,10 +105,8 @@ namespace OpenglTestingCs.Engine
             //TODO: Check if we need delta time
             Vector2 moveVec2 = _inputHandler.getMouseMoveVector();
             
-
             CameraYaw += moveVec2.X;
             CameraPitch -= moveVec2.Y;
-
 
             CameraPitch = Math.Clamp(CameraPitch, -89.0f, 89.0f);
 
@@ -92,6 +114,7 @@ namespace OpenglTestingCs.Engine
             CameraDirection.Y = MathF.Sin(MathHelper.DegreesToRadians(CameraPitch));
             CameraDirection.Z = MathF.Sin(MathHelper.DegreesToRadians(CameraYaw)) * MathF.Cos(MathHelper.DegreesToRadians(CameraPitch));
             CameraFront = Vector3.Normalize(CameraDirection);
+
         }
     }
 }

@@ -13,15 +13,11 @@ uniform mat4 uModel;
 uniform mat4 uView;
 uniform mat4 uProjection;
 
-//This is our output variable, notice that this is prefixed with an f as it's the input of our fragment shader.
 out vec4 fColor;
 
 void main() {
-
-    //gl_Position, is a built-in variable on all vertex shaders that will specify the position of our vertex.
 	gl_Position = uProjection * uView * uModel * vec4(vPos, 1.0);
 
-	//The rest of this code looks like plain old c (almost c#)
-	vec4 color = vec4(vColor.rb / 2, uBlue, vColor.a); //Swizzling and constructors in glsl.
+	vec4 color = vec4(vColor.rb / 2, uBlue, vColor.a);
 	fColor = color;
 }
