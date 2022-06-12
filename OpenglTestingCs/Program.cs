@@ -4,6 +4,7 @@ using Silk.NET.Maths;
 using Silk.NET.Windowing;
 
 using System;
+using OpenglTestingCs.ImGUI;
 
 namespace OpenglTestingCs
 {
@@ -18,6 +19,7 @@ namespace OpenglTestingCs
         private static InputHandler inputHandler;
         private static RenderHandle renderHandle;
         private static Camera camera;
+        private static ImGUIHandle imGui;
 
         public static int WIDTH = 1024;
         public static int HEIGHT = 768;
@@ -51,6 +53,7 @@ namespace OpenglTestingCs
             inputHandler = new InputHandler(window);
             camera = new Camera(inputHandler);
             renderHandle = new RenderHandle(GL.GetApi(window), camera);
+            imGui = new ImGUIHandle(renderHandle.getGL(), window, inputHandler.getInput());
 
             renderHandle.OnLoadRender();
         }
@@ -58,6 +61,8 @@ namespace OpenglTestingCs
         private static void OnRender(double time)
         {
             renderHandle.Render();
+            imGui.Render(time);
+
 
             window.SwapBuffers();
         }
@@ -65,6 +70,8 @@ namespace OpenglTestingCs
         {
             camera.OnUpdate(time, inputHandler.getCameraMove());
             inputHandler.onUpdate();
+            imGui.SetCoords( camera.getCameraPosition().ToString() );
+            
         }
         private static void OnClose() {
             renderHandle.Dispose();

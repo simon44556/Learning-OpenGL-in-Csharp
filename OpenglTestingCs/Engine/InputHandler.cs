@@ -21,12 +21,14 @@ namespace OpenglTestingCs.Engine
         private IKeyboard keyboard;
         private CameraMove cameraMove = CameraMove.None;
 
+        private IInputContext input;
+
         public InputHandler(IWindow window)
         {
             mouseMoveSensitivity = 1.0f;
             this.window = window;
 
-            IInputContext input = window.CreateInput();
+            input = window.CreateInput();
 
             keyboard = input.Keyboards[0];
 
@@ -90,6 +92,11 @@ namespace OpenglTestingCs.Engine
         }
         public void MouseScroll(IMouse mouse, ScrollWheel wheel)
         {
+        }
+
+        public IInputContext getInput()
+        {
+            return input;
         }
 
         public Vector2 getLastMousePos()

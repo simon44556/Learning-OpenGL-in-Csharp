@@ -20,14 +20,14 @@ namespace OpenglTestingCs.Engine
 
         private static Shader Shader;
 
-        /////////////////////////////////////////
+        //////////////////////////////////////////
         //Sample data
         private static readonly float[] Vertices =
         {
-            //X    Y      Z     R  G  B  A
-             0.5f,  0.5f, 1.0f, 1, 0, 0, 1,
+            //X     Y     Z      R  G  B  A
+             0.5f,  0.5f, 1.0f,  1, 0, 0, 1,
              0.5f, -0.5f, -1.0f, 0, 0, 0, 1,
-            -0.5f, -0.5f, 1.0f, 0, 0, 1, 1,
+            -0.5f, -0.5f, 1.0f,  0, 0, 1, 1,
             -0.5f,  0.5f, -1.5f, 0, 0, 0, 1
         };
 
@@ -62,8 +62,8 @@ namespace OpenglTestingCs.Engine
 
         public unsafe void Render()
         {
-            GL.Enable(EnableCap.DepthTest);
             GL.Clear((uint)ClearBufferMask.ColorBufferBit | (uint)ClearBufferMask.DepthBufferBit);
+            GL.Enable(EnableCap.DepthTest);
 
             //Binding and using our VAO and shader.
             VAO.Bind();
@@ -89,6 +89,10 @@ namespace OpenglTestingCs.Engine
             EBO.Dispose();
             VAO.Dispose();
             Shader.Dispose();
+        }
+        public GL getGL()
+        {
+            return GL;
         }
     }
 }

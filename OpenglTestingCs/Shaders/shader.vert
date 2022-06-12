@@ -9,6 +9,7 @@ layout (location = 1) in vec4 vColor;
 //This is how we declare a uniform, they can be used in all our shaders and share the same name.
 //This is prefixed with a u as it's our uniform.
 uniform float uBlue;
+
 uniform mat4 uModel;
 uniform mat4 uView;
 uniform mat4 uProjection;
