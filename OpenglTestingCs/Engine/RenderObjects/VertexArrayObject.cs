@@ -13,6 +13,10 @@ namespace OpenglTestingCs.Engine.RenderObjects
         private uint _handle;
         private GL _gl;
 
+        /**
+         * EBO is indices
+         * VBO is vertex data
+         */
         public VertexArrayObject(GL gl, BufferObject<TVertexType> vbo, BufferObject<TIndexType> ebo)
         {
             //Saving the GL instance.

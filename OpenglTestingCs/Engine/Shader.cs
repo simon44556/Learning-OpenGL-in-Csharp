@@ -168,6 +168,16 @@ namespace OpenglTestingCs.Engine
             _gl.Uniform1(location, value);
         }
 
+        public void SetUniform(string name, Vector3 value)
+        {
+            int location = _gl.GetUniformLocation(_handle, name);
+            if (location == -1)
+            {
+                throw new Exception($"{name} uniform not found on shader.");
+            }
+            _gl.Uniform3(location, value);
+        }
+
         public unsafe void SetUniform(string name, Matrix4x4 value)
         {
             int location = _gl.GetUniformLocation(_handle, name);
