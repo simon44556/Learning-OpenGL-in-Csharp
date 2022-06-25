@@ -1,79 +1,52 @@
-﻿using Silk.NET.OpenGL;
+﻿using OpenglTestingCs.Engine.Enums;
 using System.Numerics;
 
 namespace OpenglTestingCs.Engine.Cube
 {
     public class Cube
     {
-        private float cubeLength;
-        private float cubeHeight;
-        private float cubeWidth;
-
-        private GL _gl;
-
+        private Vector3 cubeColor;
         private Vector3 cubePos;
+        private CubeType type;
 
         public Cube()
         {
-            cubeHeight = 1.0f;
-            cubeLength = 1.0f;
-            cubeWidth = 1.0f;
-
-            cubePos = new Vector3(0,0,0);
+            type = CubeType.Green;
+            cubePos = new Vector3(0, 0, 0);
+            cubeColor = _getColor(type);
         }
 
-        //Get model pos
-        public Matrix4x4 getTranslation()
+        public Cube(Vector3 pos, CubeType type)
         {
-            return Matrix4x4.CreateTranslation(cubePos);
+            this.type = type;
+            cubePos = pos;
+            cubeColor = _getColor(type);
         }
 
-        public int[] GetIndices()
+        public Vector3 GetPos()
         {
-            return new int[1];
+            return cubePos;
         }
 
-        public float[] GetVertices()
+        public Vector3 GetColor()
         {
-            return new float[] {
-                -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-                -1.0f,-1.0f, 1.0f,
-                -1.0f, 1.0f, 1.0f, // triangle 1 : end
-                1.0f, 1.0f,-1.0f, // triangle 2 : begin
-                -1.0f,-1.0f,-1.0f,
-                -1.0f, 1.0f,-1.0f, // triangle 2 : end
-                1.0f,-1.0f, 1.0f,
-                -1.0f,-1.0f,-1.0f,
-                1.0f,-1.0f,-1.0f,
-                1.0f, 1.0f,-1.0f,
-                1.0f,-1.0f,-1.0f,
-                -1.0f,-1.0f,-1.0f,
-                -1.0f,-1.0f,-1.0f,
-                -1.0f, 1.0f, 1.0f,
-                -1.0f, 1.0f,-1.0f,
-                1.0f,-1.0f, 1.0f,
-                -1.0f,-1.0f, 1.0f,
-                -1.0f,-1.0f,-1.0f,
-                -1.0f, 1.0f, 1.0f,
-                -1.0f,-1.0f, 1.0f,
-                1.0f,-1.0f, 1.0f,
-                1.0f, 1.0f, 1.0f,
-                1.0f,-1.0f,-1.0f,
-                1.0f, 1.0f,-1.0f,
-                1.0f,-1.0f,-1.0f,
-                1.0f, 1.0f, 1.0f,
-                1.0f,-1.0f, 1.0f,
-                1.0f, 1.0f, 1.0f,
-                1.0f, 1.0f,-1.0f,
-                -1.0f, 1.0f,-1.0f,
-                1.0f, 1.0f, 1.0f,
-                -1.0f, 1.0f,-1.0f,
-                -1.0f, 1.0f, 1.0f,
-                1.0f, 1.0f, 1.0f,
-                -1.0f, 1.0f, 1.0f,
-                1.0f,-1.0f, 1.0f
-            };
+            return cubeColor;
+        }
+        public CubeType GetType()
+        {
+            return type;
         }
 
+        private Vector3 _getColor(CubeType type)
+        {
+            switch (type)
+            {
+                case CubeType.Red: return new Vector3(1.0f, 0.0f, 0.0f);
+                case CubeType.Green: return new Vector3(0.0f, 1.0f, 0.0f);
+                case CubeType.Blue: return new Vector3(0.0f, 0.0f, 1.0f);
+                case CubeType.None: return new Vector3(1.0f, 1.0f, 1.0f);
+                    default: return new Vector3(0.0f, 0.0f, 0.0f);
+            }
+        }
     }
 }

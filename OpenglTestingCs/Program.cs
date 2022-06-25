@@ -23,7 +23,8 @@ namespace OpenglTestingCs
 
         public static int WIDTH = 1024;
         public static int HEIGHT = 768;
-        private static double FPS = 60.0d;
+        private static double FPS = 75.0d;
+        private static double UPS = 120.0d;
         private static string TITLE = "Window Title";
         private static bool VSYNC = false;
 
@@ -32,7 +33,8 @@ namespace OpenglTestingCs
             WindowOptions options = WindowOptions.Default;
             options.Size = new Vector2D<int>(WIDTH, HEIGHT);
             options.Title = TITLE;
-            options.UpdatesPerSecond = FPS;
+            options.UpdatesPerSecond = UPS;
+            options.FramesPerSecond = FPS;
             options.VSync = VSYNC;
             options.ShouldSwapAutomatically = false;
 
@@ -61,7 +63,7 @@ namespace OpenglTestingCs
         private static void OnRender(double time)
         {
             renderHandle.Render();
-            imGui.Render(time);
+            imGui.Render(time, renderHandle.getDrawCalls());
 
 
             window.SwapBuffers();

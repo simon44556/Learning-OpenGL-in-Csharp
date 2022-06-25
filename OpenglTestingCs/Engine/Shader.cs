@@ -125,7 +125,7 @@ namespace OpenglTestingCs.Engine
 
             shaderList.Add(type, handle);
 
-            Console.WriteLine($"Addiong shader {type}");
+            Console.WriteLine($"Adding shader {type}");
 
             return handle;
         }

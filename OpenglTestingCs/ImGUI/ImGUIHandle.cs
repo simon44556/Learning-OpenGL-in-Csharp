@@ -14,7 +14,7 @@ namespace OpenglTestingCs.ImGUI
         private String coords = "";
 
         private int WIDTH = 300;
-        private int HEIGHT = 70;
+        private int HEIGHT = 120;
 
         public ImGUIHandle (GL gl, IWindow window, IInputContext input)
         {
@@ -22,7 +22,7 @@ namespace OpenglTestingCs.ImGUI
 
         }
 
-        public unsafe void Render(double time)
+        public unsafe void Render(double time, int drawCalls)
         {
             imgui.Update((float)time);
 
@@ -31,6 +31,9 @@ namespace OpenglTestingCs.ImGUI
             //ImGuiNET.ImGui.ShowDemoWindow();
             ImGuiNET.ImGui.Text("Position");
             ImGuiNET.ImGui.Text(coords);
+            ImGuiNET.ImGui.Text("FrameTime (ms): " + Math.Round(time * 1000, 2));
+            ImGuiNET.ImGui.Text("FPS: " + Math.Round(1 / time, 2));
+            ImGuiNET.ImGui.Text("Draws: " + drawCalls);
 
 
             imgui.Render();

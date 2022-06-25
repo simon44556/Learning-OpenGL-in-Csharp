@@ -21,6 +21,8 @@ namespace OpenglTestingCs.Engine
 
         Random rand = new Random();
 
+        int drawCalls = 0;
+
         private static Shader Shader;
 
         //////////////////////////////////////////
@@ -51,13 +53,16 @@ namespace OpenglTestingCs.Engine
         public void OnLoadRender()
         {
             //Sample data prepare
-            EBO = new BufferObject<uint>(GL, null, BufferTargetARB.ElementArrayBuffer);
+            EBO = new BufferObject<uint>(GL, cube.GetIndices(), BufferTargetARB.ElementArrayBuffer);
             VBO = new BufferObject<float>(GL, cube.GetVertices(), BufferTargetARB.ArrayBuffer);
             VAO = new VertexArrayObject<float, uint>(GL, VBO, EBO);
 
             //Telling the VAO object how to lay out the attribute pointers
-            VAO.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 3, 0);
-            //VAO.VertexAttributePointer(1, 4, VertexAttribPointerType.Float, 7, 3);
+            //layout 0
+            VAO.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, 0, 0); //vec3
+           
+            //layout 1
+            //VAO.VertexAttributePointer(1, 4, VertexAttribPointerType.Float, 7, 3); //vec4
 
             Shader = new Shader(GL, "Shaders/shader.vert", "Shaders/shader.frag");
 
@@ -66,7 +71,10 @@ namespace OpenglTestingCs.Engine
 
         public unsafe void Render()
         {
-            
+            drawCalls = 0;
+
+            ReadOnlySpan<uint> indices = cube.GetIndices().AsSpan<uint>();
+
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Less);
             GL.PolygonMode(GLEnum.FrontAndBack, GLEnum.Line);
@@ -81,10 +89,13 @@ namespace OpenglTestingCs.Engine
 
             Shader.SetUniform("uView", view);
             Shader.SetUniform("uProjection", projection);
+            Shader.SetUniform("uColor", new Vector3(1.0f, 1.0f, 1.0f));
+
             //Setting a uniform.
-            for (int x = 0; x < 32; x++)
-                for(int y = 0; y < 32; y++)
-                      for(int z = 0; z < 32; z++)
+            int CUBE_COUNT = 5;
+            for (int x = 0; x < CUBE_COUNT; x++)
+                for(int y = 0; y < CUBE_COUNT; y++)
+                      for(int z = 0; z < CUBE_COUNT; z++)
                     {
 
                         Matrix4x4 model = Matrix4x4.CreateTranslation(new Vector3(x, y, z));
@@ -98,13 +109,18 @@ namespace OpenglTestingCs.Engine
                         {
                             //Disco mode
                             //Shader.SetUniform("uColor", new Vector3((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble()));
-                            Shader.SetUniform("uColor", new Vector3(1.0f,1.0f,1.0f));
                             Shader.SetUniform("uModel", model);
 
-                            GL.DrawArrays(GLEnum.Triangles, 0, 12 * 3);
-                            //GL.DrawElements(PrimitiveType.Triangles, (uint)Indices.Length, DrawElementsType.UnsignedInt, null);
+
+                            drawCalls++;
+                            GL.DrawElements(PrimitiveType.Triangles, (uint)indices.Length, DrawElementsType.UnsignedInt, null);
                         }
-                    }
+                }
+        }
+
+        public int getDrawCalls()
+        {
+            return drawCalls;
         }
 
         public void Dispose()
