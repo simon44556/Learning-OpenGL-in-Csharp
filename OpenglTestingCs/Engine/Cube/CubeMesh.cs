@@ -1,34 +1,56 @@
 ﻿using System.Numerics;
 using System.Collections.Generic;
+using Silk.NET.OpenGL;
+using System;
 
 namespace OpenglTestingCs.Engine.Cube
 {
-    public class CubeMesh : Cube
+    public class CubeMesh : Cube, IDisposable
     {
         private List<Cube> cubeList;
 
-        private float meshLength;
-        private float meshHeight;
-        private float meshWidth;
+        int CUBE_COUNT = 1;
 
-        public CubeMesh()
+        Random rand = new Random();
+        public CubeMesh(GL gl)
         {
-            meshHeight = 1.0f;
-            meshLength = 1.0f;
-            meshWidth = 1.0f;
+            generateCubeList(gl);
         }
 
-        public CubeMesh(Vector3 dimensions)
+        public CubeMesh(GL gl, Vector3 dimensions)
         {
-            meshHeight = dimensions.X;
-            meshLength = dimensions.Y;
-            meshWidth = dimensions.Z;
+            generateCubeList(gl);
         }
-        
+
+        public void generateCubeList(GL gl)
+        {
+            cubeList = new List<Cube>();
+            for (int x = 0; x < CUBE_COUNT; x++)
+                for (int y = 0; y < CUBE_COUNT; y++)
+                    for (int z = 0; z < CUBE_COUNT; z++)
+                    {
+                        Cube c = new Cube(new Vector3(x, y, z), Enums.CubeType.Green, new Vector3(1,1,1));
+                        c.CreateMesh(gl);
+                        cubeList.Add(c);
+                    }
+        }
+
+        public int RenderCubes(GL gl, Camera _camera, Shader _shader)
+        {
+            int count = 0;
+            for(int i = 0; i < cubeList.Count; i++)
+            {
+                count += cubeList[i].RenderMesh(gl, _camera, _shader);
+            }
+            return count;
+        }
+
+
+
         //Get model pos
         public Matrix4x4 getTranslation(int index)
         {
-            if(index > cubeList.Count)
+            if (index > cubeList.Count)
             {
                 index = cubeList.Count - 1;
             }
@@ -36,48 +58,13 @@ namespace OpenglTestingCs.Engine.Cube
             return Matrix4x4.CreateTranslation(cubeList[index].GetPos());
         }
 
-        public uint[] GetIndices()
+        public void Dispose()
         {
-            return new uint[]
-            {
-                //Top
-                2, 6, 7,
-                2, 3, 7,
-
-                //Bottom
-                0, 4, 5,
-                0, 1, 5,
-
-                //Left
-                0, 2, 6,
-                0, 4, 6,
-
-                //Right
-                1, 3, 7,
-                1, 5, 7,
-
-                //Front
-                0, 2, 3,
-                0, 1, 3,
-
-                //Back
-                4, 6, 7,
-                4, 5, 7
-            };
-        }
-
-        public float[] GetVertices()
-        {
-            return new float[] {
-                -meshWidth, -meshHeight,  meshLength, //0
-                 meshWidth, -meshHeight,  meshLength, //1
-                -meshWidth,  meshHeight,  meshLength, //2
-                 meshWidth,  meshHeight,  meshLength, //3
-                -meshWidth, -meshHeight, -meshLength, //4
-                 meshWidth, -meshHeight, -meshLength, //5
-                -meshWidth,  meshHeight, -meshLength, //6
-                 meshWidth,  meshHeight, -meshLength  //7
-            };
+            cubeList.Clear();
+            //Remember to dispose all the instances.
+            /*VBO.Dispose();
+            EBO.Dispose();
+            VAO.Dispose();*/
         }
     }
 }

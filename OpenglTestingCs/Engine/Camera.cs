@@ -116,5 +116,14 @@ namespace OpenglTestingCs.Engine
             CameraFront = Vector3.Normalize(CameraDirection);
 
         }
+        public Matrix4x4 GetViewMatrix()
+        {
+            return Matrix4x4.CreateLookAt(CameraPosition, CameraPosition + CameraFront, CameraUp);
+        }
+
+        public Matrix4x4 GetProjectionMatrix()
+        {
+            return Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraZoom), (float)Program.WIDTH / (float)Program.HEIGHT, 0.1f, 100.0f);
+        }
     }
 }
