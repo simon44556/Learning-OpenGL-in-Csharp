@@ -1,9 +1,6 @@
 ﻿using System;
 
 using Silk.NET.OpenGL;
-using Silk.NET.Maths;
-
-using OpenglTestingCs.Engine.RenderObjects;
 using System.Numerics;
 using OpenglTestingCs.Engine.Cube;
 
@@ -21,6 +18,8 @@ namespace OpenglTestingCs.Engine
 
         int drawCalls = 0;
 
+        Vector3 CUBE_DIMENSTIONS = new Vector3(1.0f,1.0f,1.0f);
+
         Matrix4x4 view;
         Matrix4x4 projection;
 
@@ -28,7 +27,7 @@ namespace OpenglTestingCs.Engine
         {
             this.GL = GL;
             _camera = camera;
-            _cubeMesh = new CubeMesh(GL);
+            _cubeMesh = new CubeMesh(GL, CUBE_DIMENSTIONS);
         }
 
         public void OnLoadRender()
@@ -43,9 +42,8 @@ namespace OpenglTestingCs.Engine
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Less);
             GL.DepthMask(true);
-            //GL.DepthRange(1.0f, 0.0f);
-            GL.CullFace(CullFaceMode.FrontAndBack);
-            GL.PolygonMode(GLEnum.FrontAndBack, GLEnum.Line);
+            GL.CullFace(CullFaceMode.Back);
+            //GL.PolygonMode(GLEnum.FrontAndBack, GLEnum.Line);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
 
@@ -64,9 +62,9 @@ namespace OpenglTestingCs.Engine
             Shader.SetUniform("uProjection", projection);
             //Shader.SetUniform("uColor", new Vector3(1.0f, 1.0f, 1.0f));
 
-            Shader.SetUniform("uModel", Matrix4x4.CreateRotationY(MathHelper.DegreesToRadians(25f)));
+            Shader.SetUniform("uModel", Matrix4x4.Identity);
 
-            drawCalls += _cubeMesh.RenderCubes(GL, _camera, Shader);
+            drawCalls += _cubeMesh.RenderCubes(_camera, Shader);
         }
 
         public int getDrawCalls()
@@ -78,6 +76,8 @@ namespace OpenglTestingCs.Engine
         {
             //Remember to dispose all the instances.
             Shader.Dispose();
+
+            _cubeMesh.Dispose();
         }
         public GL getGL()
         {

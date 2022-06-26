@@ -25,7 +25,7 @@ namespace OpenglTestingCs
         public static int HEIGHT = 768;
         private static double FPS = 75.0d;
         private static double UPS = 120.0d;
-        private static string TITLE = "Window Title";
+        private static string TITLE = "Testing";
         private static bool VSYNC = false;
 
         static void Main(string[] args)
@@ -38,8 +38,12 @@ namespace OpenglTestingCs
             options.VSync = VSYNC;
             options.ShouldSwapAutomatically = false;
 
-            window = Window.Create(options);
+            //Thanks AMD
+            options.PreferredDepthBufferBits = 24;  // 16 should be supported everywhere  https://github.com/dotnet/Silk.NET/issues/927
+            options.PreferredStencilBufferBits = 8; // Based on google this should be 8
 
+            window = Window.Create(options);
+            
             window.Load += OnLoad;
             window.Render += OnRender;
             window.Update += OnUpdate;
@@ -55,7 +59,7 @@ namespace OpenglTestingCs
             inputHandler = new InputHandler(window);
             camera = new Camera(inputHandler);
             renderHandle = new RenderHandle(GL.GetApi(window), camera);
-            imGui = new ImGUIHandle(renderHandle.getGL(), window, inputHandler.getInput());
+            imGui = new ImGUIHandle(renderHandle.getGL(), window, inputHandler.getInput(), camera);
 
             renderHandle.OnLoadRender();
         }
@@ -72,7 +76,7 @@ namespace OpenglTestingCs
         {
             camera.OnUpdate(time, inputHandler.getCameraMove());
             inputHandler.onUpdate();
-            imGui.SetCoords( camera.getCameraPosition().ToString() );
+            imGui.onUpdate( time );
             
         }
         private static void OnClose() {

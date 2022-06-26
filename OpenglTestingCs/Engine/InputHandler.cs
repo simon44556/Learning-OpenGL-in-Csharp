@@ -83,6 +83,7 @@ namespace OpenglTestingCs.Engine
 
         public void MouseClick(IMouse mouse, MouseButton key, Vector2 coords)
         {
+
         }
         public void MouseDown(IMouse mouse, MouseButton key)
         {

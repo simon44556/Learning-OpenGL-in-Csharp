@@ -29,6 +29,11 @@ namespace OpenglTestingCs.Engine.RenderObjects
             ebo.Bind();
         }
 
+        public void BindAdditionalVBO(BufferObject<TVertexType> vbo)
+        {
+            vbo.Bind();
+        }
+
         public unsafe void VertexAttributePointer(uint index, int count, VertexAttribPointerType type, uint vertexSize, int offSet)
         {
             //Setting up a vertex attribute pointer

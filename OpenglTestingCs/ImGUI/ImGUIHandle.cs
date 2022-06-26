@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using OpenglTestingCs.Engine;
 using Silk.NET.Input;
 using Silk.NET.OpenGL;
 using Silk.NET.OpenGL.Extensions.ImGui;
@@ -11,14 +12,17 @@ namespace OpenglTestingCs.ImGUI
     {
         private ImGuiController imgui;
 
-        private String coords = "";
+        private double updateTime = 0;
+
+        private Camera _camera;
 
         private int WIDTH = 300;
-        private int HEIGHT = 120;
+        private int HEIGHT = 500;
 
-        public ImGUIHandle (GL gl, IWindow window, IInputContext input)
+        public ImGUIHandle (GL gl, IWindow window, IInputContext input, Camera c)
         {
             imgui = new ImGuiController(gl, window, input);
+            _camera = c;
 
         }
 
@@ -30,18 +34,29 @@ namespace OpenglTestingCs.ImGUI
 
             //ImGuiNET.ImGui.ShowDemoWindow();
             ImGuiNET.ImGui.Text("Position");
-            ImGuiNET.ImGui.Text(coords);
+            ImGuiNET.ImGui.Text(_camera.getCameraPosition().ToString());
+            ImGuiNET.ImGui.Text("Dir");
+            ImGuiNET.ImGui.Text(_camera.getCameraDirection().ToString());
+            ImGuiNET.ImGui.Text("Front");
+            ImGuiNET.ImGui.Text(_camera.getCameraFront().ToString());
+            ImGuiNET.ImGui.Text("UP");
+            ImGuiNET.ImGui.Text(_camera.getCameraUp().ToString());
+            ImGuiNET.ImGui.Text("Proj");
+            ImGuiNET.ImGui.Text(_camera.GetProjectionMatrix().GetDeterminant().ToString());
+            ImGuiNET.ImGui.Text("View");
+            ImGuiNET.ImGui.Text(_camera.GetViewMatrix().GetDeterminant().ToString());
             ImGuiNET.ImGui.Text("FrameTime (ms): " + Math.Round(time * 1000, 2));
             ImGuiNET.ImGui.Text("FPS: " + Math.Round(1 / time, 2));
-            ImGuiNET.ImGui.Text("Draws: " + drawCalls);
+            ImGuiNET.ImGui.Text("UPS: " + Math.Round(1 / updateTime, 2));
+            ImGuiNET.ImGui.Text("Cubes: " + drawCalls);
 
 
             imgui.Render();
         }
 
-        public void SetCoords(String coords)
+        public void onUpdate(double time)
         {
-            this.coords = coords;
+            updateTime = time;
         }
     }
 }
